@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FixedSizeList as List } from "react-window";
 
 import {
@@ -71,6 +71,7 @@ const useSuggestStyles = makeStyles({
     padding: "5px",
   },
 });
+
 const RenderRow = ({ index, style, data }) => {
   const styles = useSuggestStyles();
   const { item, selected, rowId, onClick, onKeyDown } = data[index];
@@ -95,6 +96,7 @@ const DishSuggesterPage = () => {
   const { targetDocument } = useFluent();
   const { ingredients } = useDish();
   const scrollbarWidth = useScrollbarWidth({ targetDocument });
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [searchIngredients, setSearchIngredients] = useState([]);
 
   const handleIngredients = (ingredients) => {
@@ -103,7 +105,7 @@ const DishSuggesterPage = () => {
 
   const {
     getRows,
-    selection: { toggleRow, selectedRows, isRowSelected },
+    selection: { toggleRow },
   } = useTableFeatures(
     {
       columns,
@@ -117,25 +119,32 @@ const DishSuggesterPage = () => {
     ]
   );
 
-  const selectedIngredients = useMemo(() => {
-    const result = [];
-    selectedRows.forEach((rowId) => {
-      result.push(
-        searchIngredients.length ? searchIngredients[rowId] : ingredients[rowId]
+  function handleIngredientSelection(ingredient) {
+    console.log(ingredient, selectedIngredients.includes(ingredient));
+
+    if (!selectedIngredients.includes(ingredient)) {
+      setSelectedIngredients((prev) => [...prev, ingredient]);
+    } else {
+      const filterdata = selectedIngredients.filter(
+        (item) => item !== ingredient
       );
-    });
-    return result;
-  }, [selectedRows, ingredients, searchIngredients]);
+      setSelectedIngredients(filterdata);
+    }
+  }
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(row.rowId);
+    const selected = selectedIngredients.includes(row.item);
     return {
       ...row,
-      onClick: (e) => toggleRow(e, row.rowId),
+      onClick: (e) => {
+        toggleRow(e, row.rowId);
+        handleIngredientSelection(row.item);
+      },
       onKeyDown: (e) => {
         if (e.key === " ") {
           e.preventDefault();
           toggleRow(e, row.rowId);
+          handleIngredientSelection(row.item);
         }
       },
       selected,
