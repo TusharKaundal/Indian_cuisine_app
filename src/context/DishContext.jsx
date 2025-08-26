@@ -1,9 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-
 const DishContext = createContext();
-
 export const DishProvider = ({ children }) => {
   const [dishes, setDishes] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -11,7 +9,9 @@ export const DishProvider = ({ children }) => {
 
   const fetchDishes = async () => {
     try {
-      const response = await axios.get("http://localhost:5500/api/dishes");
+      const response = await axios.get(
+        `/api/dishes`
+      );
       setDishes(response.data);
     } catch (err) {
       console.error("Error fetching dishes:", err);
@@ -20,7 +20,9 @@ export const DishProvider = ({ children }) => {
 
   const fetchIngredients = async () => {
     try {
-      const response = await axios.get("http://localhost:5500/api/ingredients");
+      const response = await axios.get(
+        `/api/ingredients`
+      );
       setIngredients(response.data);
     } catch (err) {
       console.error("Error fetching ingredients:", err);

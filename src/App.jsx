@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   },
   content: {
     flex: '1 0 auto',
-    padding: "1rem", 
+    padding: "1rem",
   },
 });
 
@@ -53,9 +53,8 @@ const darkTheme = {
   ...createDarkTheme(customTheme1),
 };
 
-darkTheme.colorBrandForeground1 = customTheme1[110]; // use brand[110] instead of brand[100]
+darkTheme.colorBrandForeground1 = customTheme1[110];
 darkTheme.colorBrandForeground2 = customTheme1[120];
-console.log(lightTheme);
 function App() {
   const styles = useStyles();
 

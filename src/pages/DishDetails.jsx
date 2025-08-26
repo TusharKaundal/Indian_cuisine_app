@@ -3,13 +3,11 @@ import {
   Card,
   CardHeader,
   CardPreview,
-  CardFooter,
   Title3,
   Body1,
   Subtitle1,
   Subtitle2,
   makeStyles,
-  shorthands,
   tokens,
   TagGroup,
   Tag,
@@ -26,7 +24,7 @@ const useStyles = makeStyles({
   },
   card: {
     marginBottom: "20px",
-    ...shorthands.borderRadius(tokens.borderRadiusLarge),
+    borderRadius: tokens.borderRadiusLarge,
     boxShadow: tokens.shadow4,
   },
   header: {
@@ -61,7 +59,7 @@ const DishDetailsPage = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:5500/api/dishes/${id}`)
+        .get(`/api/dishes/${id}`)
         .then((res) => {
           setDish(res.data);
         })
@@ -82,7 +80,7 @@ const DishDetailsPage = () => {
           header={
             <div className={styles.header}>
               <Title3>{dish.name}</Title3>
-              <Subtitle2>{dish.state || 'Indian'} Cuisine</Subtitle2>
+              <Subtitle2>{dish.state || "Indian"} Cuisine</Subtitle2>
             </div>
           }
         />
@@ -95,7 +93,7 @@ const DishDetailsPage = () => {
                   <strong>Name:</strong> {dish.name}
                 </div>
                 <div className={styles.detailItem}>
-                  <strong>Diet:</strong> {dish.diet || 'Not specified'}
+                  <strong>Diet:</strong> {dish.diet || "Not specified"}
                 </div>
                 <div className={styles.detailItem}>
                   <strong>Prep Time:</strong> {dish.prep_time || 0} minutes
@@ -106,16 +104,17 @@ const DishDetailsPage = () => {
               </div>
               <div>
                 <div className={styles.detailItem}>
-                  <strong>Flavor Profile:</strong> {dish.flavor_profile || 'Not specified'}
+                  <strong>Flavor Profile:</strong>{" "}
+                  {dish.flavor_profile || "Not specified"}
                 </div>
                 <div className={styles.detailItem}>
-                  <strong>Course:</strong> {dish.course || 'Not specified'}
+                  <strong>Course:</strong> {dish.course || "Not specified"}
                 </div>
                 <div className={styles.detailItem}>
-                  <strong>State:</strong> {dish.state || 'Not specified'}
+                  <strong>State:</strong> {dish.state || "Not specified"}
                 </div>
                 <div className={styles.detailItem}>
-                  <strong>Region:</strong> {dish.region || 'Not specified'}
+                  <strong>Region:</strong> {dish.region || "Not specified"}
                 </div>
               </div>
             </div>
@@ -125,9 +124,14 @@ const DishDetailsPage = () => {
             <div className={styles.section}>
               <Subtitle1>Ingredients</Subtitle1>
               <TagGroup>
-                {Array.isArray(dish.ingredients) && dish.ingredients.length > 0 ? (
+                {Array.isArray(dish.ingredients) &&
+                  dish.ingredients.length > 0 ? (
                   dish.ingredients.map((ingredient, index) => (
-                    <Tag key={index} appearance="outline" className={styles.tag}>
+                    <Tag
+                      key={index}
+                      appearance="outline"
+                      className={styles.tag}
+                    >
                       {ingredient}
                     </Tag>
                   ))
