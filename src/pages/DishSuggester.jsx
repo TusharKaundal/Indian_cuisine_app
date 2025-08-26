@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FixedSizeList as List } from "react-window";
 
 import {
@@ -19,10 +19,13 @@ import {
   tokens,
   TagGroup,
   Tag,
+  Input,
 } from "@fluentui/react-components";
 import { useDish } from "../context/DishContext";
 import SearchBar from "../component/SearchBar";
 import { Search24Regular } from "@fluentui/react-icons";
+import { getSuggestedDishes } from "../utils/filterSearch";
+import { ListItem } from "../component/ListItem";
 
 const columns = [
   createTableColumn({
@@ -38,9 +41,18 @@ const useSuggestStyles = makeStyles({
       color: tokens.colorBrandBackground,
     },
   },
+  main: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    "@media (min-width: 768px)": {
+      flexDirection: "row",
+    },
+  },
   suggestcontainer: {
     display: "flex",
     flexDirection: "column",
+    flexGrow: 3,
     gap: "20px",
     padding: "20px",
     borderRadius: "10px",
@@ -58,17 +70,20 @@ const useSuggestStyles = makeStyles({
     gap: "10px",
   },
   tag2: {
-    display: "flex",
-    justifyContent: "center",
-    alignContent: "center",
-    flexWrap: "wrap",
     color: tokens.colorNeutralBackground1,
     backgroundColor: tokens.colorBrandBackground,
     "&:hover": {
       backgroundColor: tokens.colorBrandBackgroundHover,
     },
-    borderRadius: tokens.borderRadiusLarge,
-    padding: "5px",
+  },
+  suggestedDishContainer: {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 7,
+    "@media (max-width: 768px)": {
+      marginBlock: "10px",
+    },
+    gap: "20px",
   },
 });
 
@@ -94,14 +109,14 @@ const RenderRow = ({ index, style, data }) => {
 const DishSuggesterPage = () => {
   const styles = useSuggestStyles();
   const { targetDocument } = useFluent();
-  const { ingredients } = useDish();
+  const { ingredients, dishes } = useDish();
   const scrollbarWidth = useScrollbarWidth({ targetDocument });
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [searchIngredients, setSearchIngredients] = useState([]);
 
-  const handleIngredients = (ingredients) => {
+  const handleIngredients = useCallback((ingredients) => {
     setSearchIngredients(ingredients);
-  };
+  }, []);
 
   const {
     getRows,
@@ -120,8 +135,6 @@ const DishSuggesterPage = () => {
   );
 
   function handleIngredientSelection(ingredient) {
-    console.log(ingredient, selectedIngredients.includes(ingredient));
-
     if (!selectedIngredients.includes(ingredient)) {
       setSelectedIngredients((prev) => [...prev, ingredient]);
     } else {
@@ -131,6 +144,10 @@ const DishSuggesterPage = () => {
       setSelectedIngredients(filterdata);
     }
   }
+
+  const suggestedDishes = useMemo(() => {
+    return getSuggestedDishes(selectedIngredients, dishes);
+  }, [selectedIngredients, dishes]);
 
   const rows = getRows((row) => {
     const selected = selectedIngredients.includes(row.item);
@@ -158,7 +175,7 @@ const DishSuggesterPage = () => {
         Select amongst ingredients you have and we'll suggest dishes you can
         make
       </p>
-      <div>
+      <div className={styles.main}>
         <div className={styles.suggestcontainer}>
           <div className={styles.suggestheader}>
             <Search24Regular />
@@ -167,13 +184,18 @@ const DishSuggesterPage = () => {
           <TagGroup>
             {selectedIngredients.length ? (
               selectedIngredients.map((ingredient) => (
-                <Tag className={styles.tag2} key={ingredient}>
+                <Tag
+                  shape="circle"
+                  size="small"
+                  className={styles.tag2}
+                  key={ingredient}
+                >
                   {ingredient}
                 </Tag>
               ))
             ) : (
               <p>No ingredients selected</p>
-            )}{" "}
+            )}
           </TagGroup>
           <p>
             Choose from{" "}
@@ -182,21 +204,17 @@ const DishSuggesterPage = () => {
               : ingredients.length}{" "}
             available ingredients
           </p>
+          <SearchBar
+            placeholder="Search Ingredients..."
+            handleIngredients={handleIngredients}
+          />
           <Table
             noNativeElements
             aria-label="Table with selection"
             aria-rowcount={rows.length}
-            style={{ minWidth: "650px" }}
           >
             <TableHeader>
               <TableRow>
-                <TableHeaderCell>
-                  <SearchBar
-                    placeholder="Search Ingredients..."
-                    handleIngredients={handleIngredients}
-                  />
-                </TableHeaderCell>
-                {/** Scrollbar alignment for the header */}
                 <div role="presentation" style={{ width: scrollbarWidth }} />
               </TableRow>
             </TableHeader>
@@ -216,6 +234,11 @@ const DishSuggesterPage = () => {
               </List>
             </TableBody>
           </Table>
+        </div>
+        <div className={styles.suggestedDishContainer}>
+          {suggestedDishes.length
+            ? suggestedDishes.map((dish) => <ListItem dishData={dish} />)
+            : ""}
         </div>
       </div>
     </div>

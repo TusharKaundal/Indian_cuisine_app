@@ -14,11 +14,14 @@ import {
   makeStyles,
   tokens,
   Caption2Strong,
+  TagGroup,
+  Tag,
 } from "@fluentui/react-components";
 import { useDish } from "../context/DishContext";
 import { Link } from "react-router";
 import { getPaginateData } from "../utils/pagination";
 import Pagination from "./Pagination";
+import Loader from "./Loader";
 
 const itemsPerPage = 10;
 const columns = [
@@ -69,18 +72,18 @@ const useStyles = makeStyles({
     overflowX: "auto",
   },
   tableHeader: {
-    '& th': {
+    "& th": {
       height: "64px",
       fontWeight: tokens.fontWeightSemibold,
       color: tokens.colorNeutralForeground1,
       backgroundColor: tokens.colorNeutralBackground3,
-      '&:hover': {
+      "&:hover": {
         backgroundColor: tokens.colorNeutralBackground3Hover,
       },
     },
-    '& th:first-child': {
-      borderTopLeftRadius: "10px"
-    }
+    "& th:first-child": {
+      borderTopLeftRadius: "10px",
+    },
   },
   tableRow: {
     textTransform: "capitalize",
@@ -91,48 +94,34 @@ const useStyles = makeStyles({
     gap: "10px",
     marginBlock: "10px",
   },
-  tag1: {
-    borderRadius: "8px",
-    width: "fit-content",
-    justifyContent: "center",
-    alignItems: "center",
-    lineHeight: "0px",
-    textAlign: "center",
-    padding: "4px 5px",
-    backgroundColor: tokens.colorNeutralBackground3,
-    "&:hover": {
-      backgroundColor: tokens.colorNeutralBackground3Hover,
-      cursor: "default",
-    },
-  },
   paginationContainer: {
     display: "flex",
     alignItems: "center",
     marginTop: "12px",
     width: "100%",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   links: {
     textDecoration: "none",
     color: tokens.colorNeutralForeground1,
     fontWeight: tokens.fontWeightSemibold,
-    '&:hover': {
+    "&:hover": {
       textDecoration: "underline",
       color: tokens.colorNeutralForeground1Hover,
-    }
-  }
+    },
+  },
 });
 
 const filterDishTag = (ingredients) => {
   if (ingredients.length > 3) {
     return [...ingredients.slice(0, 3), "+4 more"];
   }
-  return ingredients
+  return ingredients;
 };
 
 const DishesTable = () => {
   const styles = useStyles();
-  const { dishes } = useDish();
+  const { dishes, loading } = useDish();
   const [currentPage, setCurrentPage] = useState(1);
 
   const [sortState, setSortState] = useState({
@@ -156,6 +145,10 @@ const DishesTable = () => {
     ]
   );
 
+  if (loading) {
+    return <Loader />;
+  }
+
   const headerSortProps = (columnId) => ({
     onClick: (e) => toggleColumnSort(e, columnId),
     sortDirection: getSortDirection(columnId),
@@ -164,11 +157,7 @@ const DishesTable = () => {
   const rows = sort(getRows());
 
   const totalPages = Math.ceil(rows.length / itemsPerPage);
-  const paginatedData = getPaginateData(
-    rows,
-    currentPage,
-    itemsPerPage
-  );
+  const paginatedData = getPaginateData(rows, currentPage, itemsPerPage);
 
   return (
     <>
@@ -177,7 +166,7 @@ const DishesTable = () => {
         aria-label="Table with controlled sort"
         className={styles.tableContainer}
       >
-        <TableHeader className={styles.tableHeader} >
+        <TableHeader className={styles.tableHeader}>
           <TableRow>
             <TableHeaderCell {...headerSortProps("name")}>Name</TableHeaderCell>
             <TableHeaderCell>Ingredients</TableHeaderCell>
@@ -199,18 +188,20 @@ const DishesTable = () => {
             <TableRow className={styles.tableRow} key={item.id}>
               <TableCell>
                 <TableCellLayout>
-                  <Link className={styles.links} to={`/dish/${item.id}`}>{item.name}</Link>
+                  <Link className={styles.links} to={`/dish/${item.id}`}>
+                    {item.name}
+                  </Link>
                 </TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>
-                  <div className={styles.tagGroup1}>
-                    {filterDishTag(item.ingredients).map((ing) => (
-                      <div key={ing} className={styles.tag1} >
-                        <Caption2Strong>{ing}</Caption2Strong>
-                      </div>
+                  <TagGroup className={styles.tagGroup1}>
+                    {filterDishTag(item.ingredients).map((item) => (
+                      <Tag shape="circle" size="small">
+                        {item}
+                      </Tag>
                     ))}
-                  </div>
+                  </TagGroup>
                 </TableCellLayout>
               </TableCell>
               <TableCell>
@@ -233,7 +224,9 @@ const DishesTable = () => {
                 </TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.state ?? "not available"}</TableCellLayout>
+                <TableCellLayout>
+                  {item.state ?? "not available"}
+                </TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>
@@ -244,17 +237,15 @@ const DishesTable = () => {
           ))}
         </TableBody>
       </Table>
-      {
-        totalPages > 1 && (
-          <div className={styles.paginationContainer}>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              updateCurrentPage={setCurrentPage}
-            />
-          </div>
-        )
-      }
+      {totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            updateCurrentPage={setCurrentPage}
+          />
+        </div>
+      )}
     </>
   );
 };

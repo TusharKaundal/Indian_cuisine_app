@@ -11,3 +11,15 @@ export const searchDishes = (dishesData, query) => {
     );
   });
 };
+
+export const getSuggestedDishes = (selectedIngredients, dishesData) => {
+  if (selectedIngredients.length === 0) return [];
+
+  return dishesData.filter((dish) => {
+    return selectedIngredients.every((ingredient) =>
+      dish.ingredients.some((dishIngredient) =>
+        dishIngredient.toLowerCase().includes(ingredient.toLowerCase())
+      )
+    );
+  });
+};

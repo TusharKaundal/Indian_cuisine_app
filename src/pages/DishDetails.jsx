@@ -15,6 +15,7 @@ import {
 } from "@fluentui/react-components";
 import axios from "axios";
 import { useParams } from "react-router";
+import Loader from "../component/Loader";
 
 const useStyles = makeStyles({
   container: {
@@ -70,7 +71,7 @@ const DishDetailsPage = () => {
   }, [id]);
 
   if (!dish) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
@@ -84,63 +85,8 @@ const DishDetailsPage = () => {
             </div>
           }
         />
-
         <CardPreview>
-          <div style={{ padding: "1rem" }}>
-            <div className={styles.grid}>
-              <div>
-                <div className={styles.detailItem}>
-                  <strong>Name:</strong> {dish.name}
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>Diet:</strong> {dish.diet || "Not specified"}
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>Prep Time:</strong> {dish.prep_time || 0} minutes
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>Cook Time:</strong> {dish.cook_time || 0} minutes
-                </div>
-              </div>
-              <div>
-                <div className={styles.detailItem}>
-                  <strong>Flavor Profile:</strong>{" "}
-                  {dish.flavor_profile || "Not specified"}
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>Course:</strong> {dish.course || "Not specified"}
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>State:</strong> {dish.state || "Not specified"}
-                </div>
-                <div className={styles.detailItem}>
-                  <strong>Region:</strong> {dish.region || "Not specified"}
-                </div>
-              </div>
-            </div>
-
-            <Divider className={styles.divider} />
-
-            <div className={styles.section}>
-              <Subtitle1>Ingredients</Subtitle1>
-              <TagGroup>
-                {Array.isArray(dish.ingredients) &&
-                  dish.ingredients.length > 0 ? (
-                  dish.ingredients.map((ingredient, index) => (
-                    <Tag
-                      key={index}
-                      appearance="outline"
-                      className={styles.tag}
-                    >
-                      {ingredient}
-                    </Tag>
-                  ))
-                ) : (
-                  <Body1>No ingredients listed</Body1>
-                )}
-              </TagGroup>
-            </div>
-          </div>
+          
         </CardPreview>
       </Card>
     </div>

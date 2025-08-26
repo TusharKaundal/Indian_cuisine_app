@@ -22,7 +22,7 @@ const useHeaderStyles = makeStyles({
     background: `linear-gradient(45deg, ${tokens.colorBrandBackground} 0%, ${tokens.colorPaletteDarkOrangeBackground3} 100%)`,
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    paddingBlock: "5px"
+    paddingBlock: "5px",
   },
   links: {
     textDecoration: "none",
@@ -64,7 +64,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.links}>
-        <h2 className={styles.brand} >Indian Cuisine</h2>
+        <h2 className={styles.brand}>Indian Cuisine</h2>
       </Link>
       <SearchBar
         data={dishes}
@@ -72,12 +72,33 @@ const Header = () => {
         placeholder="Search for dishes, ingredients or region..."
       />
       <div className={styles.nav}>
-        <TabList defaultSelectedValue={getSelectedValue()} color={tokens.colorBrandBackground}>
+        <TabList
+          selectedValue={getSelectedValue()}
+          color={tokens.colorBrandBackground}
+        >
           <Tab value="tab1" onClick={() => navigate("/dishes")}>
-            All Dishes
+            <p
+              style={{
+                color:
+                  getSelectedValue() === "tab1"
+                    ? "var(--colorBrandBackground)"
+                    : "inherit",
+              }}
+            >
+              All Dishes
+            </p>
           </Tab>
           <Tab value="tab2" onClick={() => navigate("/suggestor")}>
-            Suggestor
+            <p
+              style={{
+                color:
+                  getSelectedValue() === "tab2"
+                    ? "var(--colorBrandBackground)"
+                    : "inherit",
+              }}
+            >
+              Suggestor
+            </p>
           </Tab>
         </TabList>
       </div>
