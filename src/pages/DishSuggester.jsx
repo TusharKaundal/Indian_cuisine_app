@@ -9,7 +9,6 @@ import {
   TableRow,
   Table,
   TableHeader,
-  TableHeaderCell,
   TableCellLayout,
   createTableColumn,
   useTableFeatures,
@@ -19,7 +18,6 @@ import {
   tokens,
   TagGroup,
   Tag,
-  Input,
 } from "@fluentui/react-components";
 import { useDish } from "../context/DishContext";
 import SearchBar from "../component/SearchBar";
@@ -52,12 +50,18 @@ const useSuggestStyles = makeStyles({
   suggestcontainer: {
     display: "flex",
     flexDirection: "column",
-    flexGrow: 3,
+    width: "100%",
+    height: "fit-content",
     gap: "20px",
     padding: "20px",
     borderRadius: "10px",
     background: tokens.colorNeutralBackground3,
     boxShadow: tokens.shadow4,
+    "@media (min-width: 768px)": {
+      position: "sticky",
+      top: "10px",
+      width: "30%",
+    },
   },
   suggestheader: {
     display: "flex",
@@ -79,7 +83,7 @@ const useSuggestStyles = makeStyles({
   suggestedDishContainer: {
     display: "flex",
     flexDirection: "column",
-    flexGrow: 7,
+    flexGrow: 1,
     "@media (max-width: 768px)": {
       marginBlock: "10px",
     },

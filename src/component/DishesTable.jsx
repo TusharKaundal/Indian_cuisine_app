@@ -87,6 +87,9 @@ const useStyles = makeStyles({
   },
   tableRow: {
     textTransform: "capitalize",
+    "& td": {
+      height: "100px",
+    },
   },
   tagGroup1: {
     display: "flex",
