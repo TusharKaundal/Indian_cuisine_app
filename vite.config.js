@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://indian-cuisine-backend-3367.onrender.com",
+        target: "https://indian-cuisine-backend-s11a.onrender.com",
         changeOrigin: true,
         secure: true,
       },

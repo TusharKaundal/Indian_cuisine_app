@@ -1,8 +1,10 @@
-import { makeStyles, Tab, TabList } from "@fluentui/react-components";
+import { Button, makeStyles, Tab, TabList, Tooltip } from "@fluentui/react-components";
 import { useNavigate, Link, useLocation } from "react-router";
 import { tokens, shorthands } from "@fluentui/react-components";
 import SearchBar from "./SearchBar";
 import { useDish } from "../context/DishContext";
+import { Lightbulb16Color, Lightbulb16Filled } from "@fluentui/react-icons";
+import { useThemeContext } from "../context/ThemeContext";
 
 const useHeaderStyles = makeStyles({
   header: {
@@ -46,6 +48,21 @@ const useHeaderStyles = makeStyles({
     justifyContent: "flex-end",
     gap: tokens.spacingHorizontalM,
   },
+  btnTooltip: {
+    cursor: "pointer",
+    border: "none",
+    background: "transparent",
+    borderRadius: "50%",
+    "&:hover": {
+      background: "transparent"
+    },
+    "&:active": {
+      background: "transparent"
+    }
+  },
+  btnDarkShadow: {
+    filter: "drop-shadow(0px -2px 3px rgba(212, 226, 19, 1))"
+  }
 });
 
 const Header = () => {
@@ -53,6 +70,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { dishes } = useDish();
+  const { isDarkTheme, toggleTheme } = useThemeContext();
 
   // Determine the selected tab based on the current path
   const getSelectedValue = () => {
@@ -102,6 +120,11 @@ const Header = () => {
           </Tab>
         </TabList>
       </div>
+
+      <Button onClick={toggleTheme} className={styles.btnTooltip} icon={isDarkTheme ? <Lightbulb16Color className={styles.btnDarkShadow} /> : <Lightbulb16Filled />} />
+
+
+
     </header>
   );
 };
