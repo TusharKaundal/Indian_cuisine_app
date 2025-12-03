@@ -11,6 +11,7 @@ const useHeaderStyles = makeStyles({
     display: "grid",
     gridTemplateColumns: "1fr 2fr 1fr",
     alignItems: "center",
+    position: "relative",
     background: tokens.colorNeutralBackground3,
     padding: "1rem",
     ...shorthands.borderWidth(tokens.borderWidthLarge),
@@ -51,6 +52,9 @@ const useHeaderStyles = makeStyles({
   btnTooltip: {
     cursor: "pointer",
     border: "none",
+    position: "absolute",
+    right: "0px",
+    top: "0px",
     background: "transparent",
     borderRadius: "50%",
     "&:hover": {
